@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>付子彤｜AI 写手 / AI 生图师 / AI 算命师</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --ink: #111111;
+      --muted: #6d6a63;
+      --line: rgba(17, 17, 17, 0.12);
+      --paper: #fffdf8;
+      --dark: #111111;
+      --blue: #075fa8;
+      --gold: #b9893b;
+      --soft: rgba(255, 255, 255, 0.72);
+      --shadow: 0 24px 90px rgba(0,0,0,.12);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(185,137,59,.14), transparent 28%),
+        radial-gradient(circle at 80% 0%, rgba(7,95,168,.12), transparent 26%),
+        linear-gradient(180deg, #fbf8f1 0%, var(--bg) 55%, #ece7dc 100%);
+      font-family: ui-serif, "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .07;
+      background-image:
+        linear-gradient(90deg, rgba(0,0,0,.42) 1px, transparent 1px),
+        linear-gradient(rgba(0,0,0,.42) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(180deg, black, transparent 80%);
+      z-index: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .grain {
+      position: fixed;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: .08;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grainMove 8s steps(10) infinite;
+    }
+    @keyframes grainMove {
+      0%,100% { transform: translate(0,0); }
+      10% { transform: translate(-5%,-8%); }
+      30% { transform: translate(4%,7%); }
+      50% { transform: translate(-8%,5%); }
+      70% { transform: translate(7%,-4%); }
+      90% { transform: translate(-3%,8%); }
+    }
+
+    .nav {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1120px, calc(100% - 32px));
+      padding: 12px 14px;
+      border: 1px solid rgba(17,17,17,.10);
+      border-radius: 999px;
+      background: rgba(255,253,248,.72);
+      backdrop-filter: blur(18px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      box-shadow: 0 12px 40px rgba(0,0,0,.06);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--dark);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-family: Inter, Arial, sans-serif;
+    }
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-size: 13px;
+      color: #34322e;
+    }
+    .nav-links a {
+      padding: 9px 12px;
+      border-radius: 999px;
+      transition: .25s ease;
+    }
+    .nav-links a:hover { background: rgba(0,0,0,.06); }
+
+    .page { position: relative; z-index: 2; }
+    .section {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 96px 0;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      align-items: center;
+      padding-top: 96px;
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 42px;
+      align-items: end;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,.45);
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-size: 13px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #1b1b1b;
+      box-shadow: 0 0 0 6px rgba(0,0,0,.08);
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(60px, 11vw, 150px);
+      line-height: .86;
+      letter-spacing: -.08em;
+      font-weight: 950;
+      text-wrap: balance;
+    }
+    .hero-name {
+      display: block;
+      letter-spacing: -.06em;
+    }
+    .hero-title {
+      display: inline-block;
+      margin-top: 18px;
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-size: clamp(14px, 1.6vw, 22px);
+      letter-spacing: .08em;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+    .hero-copy {
+      margin: 32px 0 0;
+      max-width: 680px;
+      color: #393632;
+      font-size: clamp(20px, 2.1vw, 31px);
+      line-height: 1.45;
+      font-weight: 700;
+    }
+    .hero-copy span {
+      color: var(--gold);
+      white-space: nowrap;
+    }
+    .hero-actions {
+      margin-top: 38px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 999px;
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      border: 1px solid rgba(17,17,17,.14);
+      transition: .25s ease;
+    }
+    .btn.dark { background: #111; color: #fff; }
+    .btn.light { background: rgba(255,255,255,.56); }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(0,0,0,.12); }
+
+    .hero-card {
+      border-radius: var(--radius);
+      border: 1px solid rgba(17,17,17,.12);
+      background: rgba(255,253,248,.75);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -40% -20% auto auto;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(7,95,168,.22), transparent 66%);
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .metric {
+      padding: 18px;
+      min-height: 132px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.62);
+      border: 1px solid rgba(17,17,17,.09);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .metric strong {
+      font-family: Inter, Arial, sans-serif;
+      font-size: clamp(28px, 3.6vw, 48px);
+      line-height: 1;
+      letter-spacing: -.06em;
+    }
+    .metric span {
+      color: var(--muted);
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .metric.wide { grid-column: span 2; min-height: 118px; }
+
+    .marquee {
+      width: 100%;
+      overflow: hidden;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.30);
+      padding: 18px 0;
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-weight: 900;
+      letter-spacing: .08em;
+      white-space: nowrap;
+      color: rgba(17,17,17,.42);
+    }
+    .marquee-track {
+      display: inline-block;
+      animation: scroll 28s linear infinite;
+    }
+    @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: .75fr 1.25fr;
+      gap: 32px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+    .label {
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-weight: 900;
+      color: var(--blue);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    h2 {
+      margin: 12px 0 0;
+      font-size: clamp(38px, 6.2vw, 86px);
+      line-height: .92;
+      letter-spacing: -.07em;
+    }
+    .section-desc {
+      margin: 0;
+      color: #3e3a34;
+      font-size: clamp(18px, 2vw, 26px);
+      line-height: 1.55;
+      font-weight: 650;
+    }
+    .section-desc b { color: var(--gold); }
+
+    .identity-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .identity-card {
+      min-height: 300px;
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(17,17,17,.12);
+      background: rgba(255,253,248,.66);
+      box-shadow: 0 22px 60px rgba(0,0,0,.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .identity-card::after {
+      content: attr(data-index);
+      position: absolute;
+      right: 18px;
+      bottom: -18px;
+      font-family: Inter, Arial, sans-serif;
+      font-size: 104px;
+      font-weight: 950;
+      letter-spacing: -.1em;
+      color: rgba(17,17,17,.06);
+    }
+    .identity-card h3 {
+      margin: 0 0 16px;
+      font-size: 32px;
+      letter-spacing: -.05em;
+    }
+    .identity-card p {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.75;
+      color: #514d46;
+      font-weight: 600;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 22px;
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(17,17,17,.07);
+      color: #2d2a26;
+    }
+
+    .writer-wrap {
+      display: grid;
+      grid-template-columns: .88fr 1.12fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+    .writer-panel {
+      border-radius: var(--radius);
+      background: #111;
+      color: #fff;
+      padding: 30px;
+      min-height: 540px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 94px;
+      overflow: hidden;
+    }
+    .writer-panel::before {
+      content: "";
+      position: absolute;
+      inset: auto -20% -35% -20%;
+      height: 280px;
+      background: radial-gradient(circle, rgba(7,95,168,.55), transparent 65%);
+      filter: blur(4px);
+    }
+    .writer-panel > * { position: relative; z-index: 1; }
+    .writer-panel h3 {
+      margin: 0;
+      font-size: clamp(40px, 5.2vw, 72px);
+      line-height: .95;
+      letter-spacing: -.07em;
+    }
+    .writer-panel p {
+      margin: 24px 0 0;
+      color: rgba(255,255,255,.72);
+      font-size: 18px;
+      line-height: 1.7;
+      font-weight: 600;
+    }
+    .writer-proof {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+      font-family: Inter, "PingFang SC", sans-serif;
+    }
+    .proof-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.84);
+    }
+    .proof-row strong { font-size: 18px; color: #fff; }
+
+    .article-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .article-card {
+      border-radius: var(--radius);
+      border: 1px solid rgba(17,17,17,.12);
+      background: rgba(255,253,248,.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .article-shot {
+      height: 620px;
+      background: #ddd;
+      overflow: hidden;
+      position: relative;
+    }
+    .article-shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      transition: transform .7s ease;
+    }
+    .article-card:hover .article-shot img { transform: scale(1.04); }
+    .article-info {
+      padding: 18px 18px 20px;
+    }
+    .article-info h4 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.15;
+      letter-spacing: -.04em;
+    }
+    .article-info p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-weight: 600;
+    }
+    .social-line {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-weight: 900;
+      color: #1f1f1f;
+    }
+    .social-line span {
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(17,17,17,.06);
+    }
+
+    .image-lab {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+    }
+    .showcase {
+      min-height: 610px;
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(0,0,0,.84), rgba(0,0,0,.54)),
+        radial-gradient(circle at 20% 20%, rgba(185,137,59,.9), transparent 28%),
+        radial-gradient(circle at 80% 55%, rgba(7,95,168,.85), transparent 26%),
+        #111;
+      color: #fff;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .showcase::before, .showcase::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      pointer-events: none;
+    }
+    .showcase::before { width: 520px; height: 520px; right: -170px; top: -140px; }
+    .showcase::after { width: 330px; height: 330px; left: -100px; bottom: -120px; }
+    .showcase-inner { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+    .showcase h3 {
+      margin: 0;
+      font-size: clamp(42px, 6vw, 84px);
+      line-height: .9;
+      letter-spacing: -.08em;
+    }
+    .showcase p {
+      margin: 18px 0 0;
+      max-width: 660px;
+      color: rgba(255,255,255,.75);
+      font-size: 18px;
+      line-height: 1.75;
+      font-weight: 600;
+    }
+    .placeholder-gallery {
+      margin-top: 34px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .placeholder-img {
+      aspect-ratio: 3 / 4;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: #111;
+      overflow: hidden;
+      position: relative;
+      margin: 0;
+      box-shadow: 0 18px 48px rgba(0,0,0,.24);
+    }
+    .placeholder-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: .96;
+      filter: saturate(.92) contrast(1.04);
+      transition: transform .75s ease, filter .75s ease;
+    }
+    .placeholder-img::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 48%, rgba(0,0,0,.72) 100%);
+      pointer-events: none;
+    }
+    .placeholder-img figcaption {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      z-index: 2;
+      color: rgba(255,255,255,.9);
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 1.35;
+      letter-spacing: .04em;
+      text-shadow: 0 2px 18px rgba(0,0,0,.45);
+    }
+    .placeholder-img:hover img { transform: scale(1.06); filter: saturate(1) contrast(1.08); }
+    .site-card {
+      min-height: 610px;
+      border-radius: var(--radius);
+      background: rgba(255,253,248,.72);
+      border: 1px solid rgba(17,17,17,.12);
+      box-shadow: var(--shadow);
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .site-card h3 { margin: 0; font-size: 38px; letter-spacing: -.06em; line-height: 1; }
+    .site-card p { color: var(--muted); font-size: 17px; line-height: 1.72; font-weight: 600; }
+    .url-box {
+      border-radius: 22px;
+      border: 1px dashed rgba(17,17,17,.28);
+      background: rgba(255,255,255,.42);
+      padding: 22px;
+      color: #3a3732;
+      font-family: Inter, "PingFang SC", sans-serif;
+      font-weight: 850;
+      word-break: break-all;
+    }
+    .image-site-qr {
+      margin-top: 18px;
+      width: min(220px, 100%);
+      padding: 10px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid rgba(17,17,17,.1);
+      box-shadow: 0 18px 40px rgba(0,0,0,.12);
+    }
+    .image-site-qr img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .fortune-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+    .fortune-card {
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 75% 10%, rgba(185,137,59,.32), transparent 28%),
+        linear-gradient(145deg, #141414, #070707);
+      color: #fff;
+      padding: 30px;
+      min-height: 620px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+    .fortune-card::before {
+      content: "命";
+      position: absolute;
+      right: -8px;
+      bottom: -42px;
+      font-size: 220px;
+      line-height: 1;
+      color: rgba(255,255,255,.055);
+      font-weight: 900;
+    }
+    .fortune-card h3 {
+      margin: 0;
+      font-size: clamp(46px, 5.7vw, 78px);
+      line-height: .92;
+      letter-spacing: -.08em;
+    }
+    .fortune-card p {
+      margin: 22px 0 0;
+      color: rgba(255,255,255,.72);
+      font-size: 18px;
+      line-height: 1.78;
+      font-weight: 600;
+    }
+    .fortune-services {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    .service {
+      border-radius: 24px;
+      background: rgba(255,253,248,.72);
+      border: 1px solid rgba(17,17,17,.12);
+      padding: 22px;
+      min-height: 196px;
+      box-shadow: 0 18px 54px rgba(0,0,0,.07);
+    }
+    .service b {
+      display: block;
+      font-size: 26px;
+      letter-spacing: -.05em;
+      margin-bottom: 10px;
+    }
+    .service p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.68;
+      font-weight: 600;
+    }
+
+    .process {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .step {
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px solid rgba(17,17,17,.12);
+      background: rgba(255,255,255,.42);
+      min-height: 220px;
+    }
+    .step small {
+      font-family: Inter, Arial, sans-serif;
+      color: var(--gold);
+      font-weight: 950;
+      letter-spacing: .08em;
+    }
+    .step b {
+      display: block;
+      margin: 22px 0 10px;
+      font-size: 24px;
+      letter-spacing: -.04em;
+    }
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-weight: 600;
+    }
+
+    .final {
+      padding-bottom: 48px;
+    }
+    .final-card {
+      border-radius: 36px;
+      background: #111;
+      color: #fff;
+      padding: clamp(28px, 5vw, 64px);
+      min-height: 520px;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 24px;
+      align-items: end;
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+    .final-card::before {
+      content: "";
+      position: absolute;
+      width: 620px;
+      height: 620px;
+      right: -220px;
+      top: -260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(185,137,59,.44), transparent 62%);
+    }
+    .final-card > * { position: relative; z-index: 1; }
+    .final h2 { color: #fff; }
+    .final p {
+      color: rgba(255,255,255,.72);
+      font-size: 19px;
+      line-height: 1.75;
+      font-weight: 600;
+    }
+    .contact-card {
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.07);
+      padding: 24px;
+      font-family: Inter, "PingFang SC", sans-serif;
+    }
+    .contact-card b { display: block; font-size: 22px; margin-bottom: 12px; }
+    .contact-card span { display: block; color: rgba(255,255,255,.68); line-height: 1.7; }
+    .wechat-qr {
+      margin-top: 18px;
+      width: min(220px, 100%);
+      padding: 10px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 18px 48px rgba(0,0,0,.2);
+    }
+    .wechat-qr img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .reveal { opacity: 0; transform: translateY(30px); animation: reveal .9s ease forwards; }
+    .delay-1 { animation-delay: .12s; }
+    .delay-2 { animation-delay: .24s; }
+    .delay-3 { animation-delay: .36s; }
+    @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 980px) {
+      .hero-grid, .section-head, .writer-wrap, .image-lab, .fortune-grid, .final-card { grid-template-columns: 1fr; }
+      .identity-grid, .process { grid-template-columns: 1fr 1fr; }
+      .writer-panel { position: relative; top: auto; min-height: 420px; }
+      .article-shot { height: 520px; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 680px) {
+      .section { width: min(100% - 24px, 1180px); padding: 68px 0; }
+      .hero { padding-top: 82px; }
+      h1 { font-size: clamp(58px, 18vw, 96px); }
+      .metric-grid, .article-grid, .identity-grid, .fortune-services, .process { grid-template-columns: 1fr; }
+      .metric.wide { grid-column: span 1; }
+      .article-shot { height: 490px; }
+      .placeholder-gallery { grid-template-columns: 1fr; }
+      .showcase, .site-card, .fortune-card { min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+
+  <nav class="nav">
+    <a class="brand" href="#top" aria-label="回到顶部">
+      <span class="brand-mark">付</span>
+      <span>付子彤</span>
+    </a>
+    <div class="nav-links">
+      <a href="#writer">AI 写手</a>
+      <a href="#image">AI 生图师</a>
+      <a href="#fortune">AI 算命师</a>
+      <a href="#contact">合作</a>
+    </div>
+  </nav>
+
+  <main class="page" id="top">
+    <section class="section hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow reveal"><span class="dot"></span> AI Content / Image / Metaphysics Operator</div>
+          <h1 class="reveal delay-1">
+            <span class="hero-name">付子彤</span>
+            <span class="hero-title">AI 写手 · AI 生图师 · AI 算命师</span>
+          </h1>
+          <p class="hero-copy reveal delay-2">
+            我做的不是“会用 AI”，而是把 AI 变成能出结果的生产线：<span>10 分钟成稿、批量出图、完整落地成网页与产品。</span>
+          </p>
+          <div class="hero-actions reveal delay-3">
+            <a class="btn dark" href="#writer">看内容案例</a>
+            <a class="btn light" href="#image">看生图与网站</a>
+            <a class="btn light" href="#fortune">看算命产品</a>
+          </div>
+        </div>
+
+        <aside class="hero-card reveal delay-2">
+          <div class="metric-grid">
+            <div class="metric">
+              <strong>10min</strong>
+              <span>AI 辅助完成选题、结构、标题、正文与发布文案</span>
+            </div>
+            <div class="metric">
+              <strong>1w+</strong>
+              <span>单篇内容点赞级别案例，证明内容可以被真实用户理解与传播</span>
+            </div>
+            <div class="metric">
+              <strong>3</strong>
+              <span>内容写作、AI 生图、AI 算命，三条能力线可组合成完整项目</span>
+            </div>
+            <div class="metric">
+              <strong>Web</strong>
+              <span>不只交付图片和文案，也能包装成展示页、工具页、产品页</span>
+            </div>
+            <div class="metric wide">
+              <strong>From prompt to product.</strong>
+              <span>从一句想法，到一套可以给客户看的成品页面。</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        AI WRITER · AI IMAGE CREATOR · AI FORTUNE PRODUCT · FAST EXECUTION · PORTFOLIO · WEB DELIVERY · AI WRITER · AI IMAGE CREATOR · AI FORTUNE PRODUCT · FAST EXECUTION · PORTFOLIO · WEB DELIVERY ·&nbsp;
+      </div>
+    </div>
+
+    <section class="section" id="identity">
+      <div class="section-head">
+        <div>
+          <div class="label">Three identities</div>
+          <h2>三个身份，解决同一个问题：让想法变成可展示的结果。</h2>
+        </div>
+        <p class="section-desc">
+          决策方最需要看的不是“我会不会玩工具”，而是我能不能把一个模糊需求，快速拆成<b>文案、视觉、网页、转化入口</b>。
+        </p>
+      </div>
+      <div class="identity-grid">
+        <article class="identity-card" data-index="01">
+          <h3>AI 写手</h3>
+          <p>用 AI 做选题判断、情绪切口、文章结构和表达压缩。重点不是堆字，而是把读者最焦虑、最想看的问题写出来。</p>
+          <div class="tags"><span class="tag">爆款标题</span><span class="tag">短时间成稿</span><span class="tag">情绪钩子</span></div>
+        </article>
+        <article class="identity-card" data-index="02">
+          <h3>AI 生图师</h3>
+          <p>把风格、人物、场景、镜头、质感拆成提示词系统，快速做封面、头像、海报、人物图、产品视觉。</p>
+          <div class="tags"><span class="tag">封面视觉</span><span class="tag">人物设定</span><span class="tag">商业海报</span></div>
+        </article>
+        <article class="identity-card" data-index="03">
+          <h3>AI 算命师</h3>
+          <p>把面相、命理、性格分析、关系判断包装成高沉浸报告：不是一句结论，而是一套有仪式感的体验。</p>
+          <div class="tags"><span class="tag">面相报告</span><span class="tag">长文分析</span><span class="tag">沉浸网页</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="writer">
+      <div class="section-head">
+        <div>
+          <div class="label">AI Writer</div>
+          <h2>AI 写出来，但必须像人一样击中人。</h2>
+        </div>
+        <p class="section-desc">
+          这两篇内容强调的是速度和结果：<b>AI 辅助，十分钟出结构和正文</b>，再由我做人味、节奏、痛点和传播感校准。
+        </p>
+      </div>
+
+      <div class="writer-wrap">
+        <aside class="writer-panel">
+          <div>
+            <h3>10 分钟，把焦虑写成一篇能被转发的文章。</h3>
+            <p>我擅长把一个普通主题拆成“标题冲击力—读者痛点—解决路径—行动提醒”。AI 负责提速，我负责判断什么东西真正能打动人。</p>
+            <div class="writer-proof">
+              <div class="proof-row"><span>内容方向</span><strong>高考 / 焦虑 / 学习规划</strong></div>
+              <div class="proof-row"><span>生产方式</span><strong>AI 初稿 + 人工校准</strong></div>
+              <div class="proof-row"><span>交付速度</span><strong>约 10 分钟成型</strong></div>
+            </div>
+          </div>
+          <a class="btn light" href="#contact">合作写一篇</a>
+        </aside>
+
+        <div class="article-grid">
+          <article class="article-card">
+            <div class="article-shot">
+              <img src="fu_zitong_assets/writer-case-01-gaokao-40-days.jpg" alt="高考最后四十天内容案例截图" />
+            </div>
+            <div class="article-info">
+              <h4>《高考最后四十天，别再等奇迹了》</h4>
+              <p>情绪切口非常直接：不是笨死，是乱死。适合做考前焦虑类内容的第一屏钩子。</p>
+              <div class="social-line"><span>❤ 3828</span><span>☆ 2085</span><span>💬 89</span></div>
+            </div>
+          </article>
+          <article class="article-card">
+            <div class="article-shot">
+              <img src="fu_zitong_assets/writer-case-02-gaokao-anxiety.jpg" alt="解决高考焦虑内容案例截图" />
+            </div>
+            <div class="article-info">
+              <h4>《这一篇能解决你高考全部的焦虑》</h4>
+              <p>以“焦虑—反复想—文章能帮你”为入口，把读者从害怕拉回可执行的阅读状态。</p>
+              <div class="social-line"><span>❤ 1w+</span><span>☆ 4451</span><span>💬 290</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="image">
+      <div class="section-head">
+        <div>
+          <div class="label">AI Image Creator</div>
+          <h2>生图不是玩图，是把视觉风格变成资产。</h2>
+        </div>
+        <p class="section-desc">
+          这里展示的是三张已完成的 AI 视觉作品：<b>花艺质感海报、黑白赛博人像、杂志切片封面</b>。项目方关注的不是“会不会生图”，而是能不能把风格做成可展示、可传播、可商业化的视觉资产。
+        </p>
+      </div>
+
+      <div class="image-lab">
+        <article class="showcase">
+          <div class="showcase-inner">
+            <div>
+              <h3>AI Image Lab</h3>
+              <p>可做头像、海报、封面、人物设定、婚礼视觉、同人图、商业活动主视觉。重点是把需求翻译成稳定提示词，而不是随机抽卡。</p>
+            </div>
+            <div class="placeholder-gallery">
+              <figure class="placeholder-img">
+                <img src="fu_zitong_assets/ai-image-01-floral-poster.jpg" alt="花艺质感海报作品" />
+                <figcaption>作品图 01 · 花艺质感海报</figcaption>
+              </figure>
+              <figure class="placeholder-img">
+                <img src="fu_zitong_assets/ai-image-02-fractal-haze.jpg" alt="黑白赛博人像作品" />
+                <figcaption>作品图 02 · 黑白赛博人像</figcaption>
+              </figure>
+              <figure class="placeholder-img">
+                <img src="fu_zitong_assets/ai-image-03-qiu-ting-cover.jpg" alt="杂志切片封面作品" />
+                <figcaption>作品图 03 · 杂志切片封面</figcaption>
+              </figure>
+            </div>
+          </div>
+        </article>
+
+        <aside class="site-card">
+          <div>
+            <div class="label">Image Website</div>
+            <h3>AI 生图网站入口</h3>
+            <p>后续可放你的生图展示站、在线体验站、作品集站。对方点进去，不需要解释太多，直接看到“这个人能做出东西”。</p>
+          </div>
+          <div class="url-box">
+            生图网站链接：<br/>
+            <a href="https://incandescent-boba-789efa.netlify.app/" target="_blank" rel="noopener">https://incandescent-boba-789efa.netlify.app/</a>
+            <div class="image-site-qr">
+              <img src="fu_zitong_assets/image-site-qr.jpg" alt="AI 生图网站二维码" />
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="fortune">
+      <div class="section-head">
+        <div>
+          <div class="label">AI Fortune Product</div>
+          <h2>「瞧你那命相」：一张脸，生成一份可转化的东方命相档案。</h2>
+        </div>
+        <p class="section-desc">
+          我选这个版本：<b>商业项目介绍 + 一句话高级版 + 决策视角转化逻辑</b>。它看起来不像玩具网页，而像一个能做流量、获客、付费报告和私域沉淀的 AI 玄学产品。
+        </p>
+      </div>
+
+      <div class="fortune-grid">
+        <article class="fortune-card">
+          <h3>AI 面相报告生成网站</h3>
+          <p>「瞧你那命相」定位于 AI 玄学赛道的轻量化体验产品。它将 AI 交互生成、东方相法内容体系、黑金视觉叙事与长篇报告包装结合在一起，把传统“看相”升级成一个可传播、可转化、可商业化的数字体验。</p>
+          <p>用户通过扫码进入网站，上传照片后，系统会进入一段具有仪式感的观相流程：面部扫描、命盘校准、宫位点亮、五官识别、报告生成。最终输出一份覆盖气场、性格、财运、感情、事业、人际关系和行动建议的长篇命相档案。</p>
+          <p style="font-size:22px;color:#fff;font-weight:800;">用 AI 把一张脸，生成一份可传播、可转化、可商业化的东方命相档案。</p>
+        </article>
+
+        <div class="fortune-services">
+          <div class="service">
+            <b>产品路径</b>
+            <p>上传照片 → 面部扫描 → 命盘生成 → 长篇报告 → 私域咨询 / 付费转化。</p>
+          </div>
+          <div class="service">
+            <b>内容体系</b>
+            <p>融合气场判断、性格画像、财运趋势、关系模式、事业方向、贵人识别与近期提醒。</p>
+          </div>
+          <div class="service">
+            <b>商业用途</b>
+            <p>适合短视频引流、小红书种草、私域获客、付费报告、主理人个人 IP 包装和线下活动互动。</p>
+          </div>
+          <div class="service">
+            <b>转化逻辑</b>
+            <p>用户因为好奇扫码，因为报告停留，因为命相内容产生信任，最后进入咨询和成交。</p>
+          </div>
+          <div class="service" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:center;">
+            <div>
+              <b>扫码体验网站</b>
+              <p>https://eloquent-panda-f4f7c1.netlify.app/<br/>这是一个低成本获客入口：用强好奇心降低点击门槛，用长篇报告提高停留，用结果页承接私域转化。</p>
+            </div>
+            <a href="https://eloquent-panda-f4f7c1.netlify.app/" target="_blank" rel="noopener" style="display:block;border-radius:20px;overflow:hidden;border:1px solid rgba(17,17,17,.12);background:#fff;padding:10px;box-shadow:0 16px 42px rgba(0,0,0,.12);">
+              <img src="fu_zitong_assets/mingxiang-site-qr.jpg" alt="瞧你那命相网站二维码" style="width:100%;height:auto;border-radius:12px;" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="label">Workflow</div>
+          <h2>我适合做快速试错型项目。</h2>
+        </div>
+        <p class="section-desc">
+          给我一个方向，我可以先做出一版能看的东西，再根据反馈继续升级。先有结果，再谈优化。
+        </p>
+      </div>
+      <div class="process">
+        <div class="step"><small>STEP 01</small><b>拆需求</b><p>明确项目方要的是曝光、成交、展示、引流，还是产品体验。</p></div>
+        <div class="step"><small>STEP 02</small><b>出初版</b><p>用 AI 快速生成文案、视觉方向、网页结构和内容模块。</p></div>
+        <div class="step"><small>STEP 03</small><b>做人味</b><p>去掉 AI 腔，强化痛点、节奏、画面、可信度和商业表达。</p></div>
+        <div class="step"><small>STEP 04</small><b>可交付</b><p>整理成图文、网页、报告、作品集，让别人点开就能看懂。</p></div>
+      </div>
+    </section>
+
+    <section class="section final" id="contact">
+      <div class="final-card">
+        <div>
+          <div class="label">For collaboration</div>
+          <h2>我不是来展示工具的，我是来展示交付能力的。</h2>
+          <p>如果项目需要快速把想法变成内容、视觉、网页或付费体验，我可以从第一版开始做起：先跑通，再放大。</p>
+          <div class="hero-actions">
+            <a class="btn light" href="mailto:2971746932@qq.com">联系我</a>
+            <a class="btn light" href="#top">返回顶部</a>
+          </div>
+        </div>
+        <aside class="contact-card">
+          <b>付子彤</b>
+          <span>AI 写手 / AI 生图师 / AI 算命师</span>
+          <span>邮箱：2971746932@qq.com</span>
+          <span>电话：13697930634</span>
+          <div class="wechat-qr">
+            <img src="fu_zitong_assets/wechat-qr.jpg" alt="付子彤微信二维码" />
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const cards = document.querySelectorAll('.identity-card, .article-card, .service, .step, .showcase, .site-card, .fortune-card');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.animate([
+            { opacity: 0, transform: 'translateY(28px)' },
+            { opacity: 1, transform: 'translateY(0)' }
+          ], { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' });
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .12 });
+    cards.forEach(card => {
+      card.style.opacity = 0;
+      observer.observe(card);
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 10;
+      const y = (e.clientY / window.innerHeight - 0.5) * 10;
+      document.documentElement.style.setProperty('--mx', x + 'px');
+      document.documentElement.style.setProperty('--my', y + 'px');
+    });
+  </script>
+</body>
+</html>
